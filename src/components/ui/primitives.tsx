@@ -1,4 +1,4 @@
-import type { ElementType, HTMLAttributes, ReactNode } from "react";
+import { createElement, type ElementType, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export function Container({
@@ -6,7 +6,9 @@ export function Container({
   as: Tag = "div",
   ...props
 }: HTMLAttributes<HTMLElement> & { as?: ElementType }) {
-  return <Tag className={cn("container-luxe", className)} {...props} />;
+  // `createElement` rather than `<Tag />`: under @types/react 19 a bare
+  // polymorphic `ElementType` collapses its JSX attributes to `never`.
+  return createElement(Tag, { className: cn("container-luxe", className), ...props });
 }
 
 export function Section({
