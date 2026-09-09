@@ -87,7 +87,17 @@ async function withFallback<T>(
 /* ------------------------------------------------------------------ Products */
 
 const loadAllProducts = cache(async (): Promise<Product[]> => {
-  return withFallback("getProducts", fetchProducts, () => localActiveProducts());
+  return withFallback(
+    "getProducts",
+    async () => {
+      const rows = await fetchProducts();
+      // A successful but empty Supabase response (unseeded project, or RLS
+      // hiding every row) would otherwise bypass the local-store fallback,
+      // since `withFallback` only reacts to thrown errors.
+      return rows.length > 0 ? rows : localActiveProducts();
+    },
+    () => localActiveProducts(),
+  );
 });
 
 export async function getProducts(query: ProductQuery = {}): Promise<Product[]> {

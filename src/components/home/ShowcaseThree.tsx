@@ -13,6 +13,8 @@ export function ShowcaseThree({ products }: { products: Product[] }) {
   const [active, setActive] = useState(0);
   const current = picks[active];
 
+  if (!current) return null;
+
   return (
     <Section className="relative overflow-hidden border-b border-bone/10 bg-ink-soft">
       <div
